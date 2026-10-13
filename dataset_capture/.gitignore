@@ -1,0 +1,6 @@
+# Las capturas y sus metadatos pueden ocupar mucho espacio.
+/frames/*
+!/frames/.gitkeep
+
+# Copias seleccionadas, etiquetas propuestas, ZIP y caché local de YOLO.
+/prepared/
