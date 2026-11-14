@@ -8,7 +8,7 @@ from deep_sort_realtime.deepsort_tracker import DeepSort
 COCO_VEHICLES = {2: "car", 3: "motorcycle", 5: "bus", 7: "truck"}
 
 class YoloDetector:
-    def __init__(self, model_name="yolo11s.onnx", conf=0.2, imgsz=640):
+    def __init__(self, model_name="yolo11s.pt", conf=0.2, imgsz=640):
         self.model = YOLO(model_name)
         self.device = "cuda:0" if torch.cuda.is_available() else "cpu"
         print(f"Usando dispositivo para YOLO: {self.device}")

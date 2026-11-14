@@ -38,7 +38,7 @@ def main():
         # --- CONFIGURAR EL MUNDO EN MODO SÍNCRONO ---
         settings = world.get_settings()
         settings.synchronous_mode = True
-        #settings.fixed_delta_seconds = 0.03
+        settings.fixed_delta_seconds = 1#0.1
         settings.max_substep_delta_time = 0.025     # Asegura estabilidad del paso de física
         settings.max_substeps = 3
         world.apply_settings(settings)
@@ -153,7 +153,7 @@ def main():
                 # Enviar imagen de la cámara
                 camera_data = prepare_camera_data(image_queue_1, image_queue_2)
                 zmq_publisher.send_frame(camera_data)
-                
+                 
                 data_received = False
                 while not data_received:
                     # Recibir datos procesados de visión

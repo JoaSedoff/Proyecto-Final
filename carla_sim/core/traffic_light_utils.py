@@ -52,7 +52,7 @@ class TrafficLightManager:
             "A": "GREEN",
             "B": "RED",
             "C": "RED",
-            "D": "RED"
+            "D": "RED" 
         }
         Aplica los estados de los semáforos según el diccionario proporcionado.
         """

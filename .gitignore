@@ -7,3 +7,4 @@ carla_sim/core/__pycache__/
 opencv_subscriber/core/__pycache__/
 __pycache__/
 *\vision_and_capture.py
+.conda/

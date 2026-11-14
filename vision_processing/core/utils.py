@@ -26,14 +26,29 @@ def load_camera_config(config_path):
         rois.append(roi_structs)
 
     return {
-        "send_port": cfg.get("send_port", 5556),
+        "send_port": cfg.get("send_port", 5557),
         "receive_port": cfg.get("receive_port", 5555),
+        "display": cfg.get("display", True),
         "rois_a": rois[0],
         "rois_b": rois[1]
     }
 
 
 def process_frame(data_package, rois, vision_system, window_name="Camera"):
+    """
+    Procesa un paquete de datos de imagen para realizar detección y conteo de objetos
+    dentro de ROIs, además muestra la imagen procesada en una ventana.
+
+    Args:
+        data_package (dict): Diccionario que contiene la imagen y los metadatos.
+        rois (list): Lista de diccionarios, donde cada uno define una ROI.
+        vision_system: Objeto del tracker de visión (ej. VisionTrackerBlock).
+        window_name (str): Nombre de la ventana para mostrar la imagen procesada.
+
+    Returns:
+        dict: Un diccionario que mapea el nombre de cada ROI a su conteo de objetos.
+              Ejemplo: {"A": 5, "B": 2}
+    """
     metadata = data_package["metadata"]
     image_rgba = data_package["image"]
     image_bgr = image_rgba[:, :, :3].copy()
@@ -84,3 +99,43 @@ def process_frame(data_package, rois, vision_system, window_name="Camera"):
     cv2.imshow(window_name, image_bgr)
 
     return total_counts.values() 
+
+def process_frame_inference_only(data_package, rois, vision_system):
+    """
+    Procesa un paquete de datos de imagen para realizar detección y conteo de objetos
+    dentro de ROIs.
+
+    Args:
+        data_package (dict): Diccionario que contiene la imagen y los metadatos.
+        rois (list): Lista de diccionarios, donde cada uno define una ROI.
+        vision_system: Objeto del tracker de visión (ej. VisionTrackerBlock).
+
+    Returns:
+        enteros: Conteos de objetos dentro de cada ROI como tupla.
+    """
+    # Extraer imagen y metadatos
+    metadata = data_package["metadata"]
+    image_rgba = data_package["image"]
+    image_bgr = image_rgba[:, :, :3].copy()
+
+    timestamp = metadata["timestamp"]
+
+    image_rgb = cv2.cvtColor(image_bgr, cv2.COLOR_BGR2RGB)
+    
+    boxes, ids, _ = vision_system.process(image_rgb, timestamp)
+    
+    # Conteo de objetos dentro de cada ROI
+    total_counts = {}
+    for roi in rois:
+        roi_points = np.array(roi["points"], dtype=np.int32)
+        
+        inside_ids = set()
+        for box, track_id in zip(boxes, ids):
+            center_point = (int((box[0] + box[2]) / 2), int((box[1] + box[3]) / 2))
+
+            if cv2.pointPolygonTest(roi_points, center_point, False) >= 0:
+                inside_ids.add(track_id)
+
+        total_counts[roi["name"]] = len(inside_ids)
+
+    return total_counts.values()  # Retorna conteos como tupla (sem_A, sem_B) o (sem_C, sem_D)
