@@ -1,0 +1,2 @@
+{"model": "yolo11n.pt", "pairs": 380, "ms_pair_med": 65.5, "ms_pair_p95": 98.9, "ms_yolo_med": 14.9, "ms_deepsort_med": 17.6}
+{"model": "yolo11s.pt", "pairs": 380, "ms_pair_med": 70.5, "ms_pair_p95": 90.3, "ms_yolo_med": 15.1, "ms_deepsort_med": 19.3}
